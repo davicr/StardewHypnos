@@ -191,17 +191,17 @@ namespace StardewHypnos
                             {
                                 if (Game1.IsMultiplayer)
                                 {
-                                    // Special handling for MP
+                                    // Wait for other players to get ready in MP
                                     Game1.player.team.SetLocalReady("sleep", true);
                                     Game1.dialogueUp = false;
                                     Game1.activeClickableMenu = new ReadyCheckDialog("sleep", true, delegate (Farmer who)
                                     {
                                         /*
-                                         * This is a bit frustrating. Seems like isInBed needs to be set
-                                         * as late as possible or it'll get.. overwritten? Anyways, if
-                                         * isInBed is false the following doSleep call will cause a hang.
+                                         * The following startSleep call will fail if isInBed == false,
+                                         * so we'll change it to true just before sleeping and the
+                                         * game won't have a chance of changing it back.
                                          */
-                                        Game1.player.isInBed.Set(true);
+                                        Game1.player.isInBed.Value = true;
                                         Helper.Reflection.GetMethod(Game1.currentLocation, "doSleep").Invoke();
                                     }, delegate (Farmer who)
                                     {
